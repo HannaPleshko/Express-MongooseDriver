@@ -1,14 +1,14 @@
 export interface iTask {
-  _id: String;
-  name: String;
-  surname: String;
-  tasks: String[];
+  _id: string;
+  name: string;
+  surname: string;
+  tasks: string[];
 }
 
 export interface iUser {
-  _id: String;
-  name: String;
-  surname: String;
-  age: Number;
-  role: String;
+  _id: string;
+  name: string;
+  surname: string;
+  age: number;
+  role: string;
 }
