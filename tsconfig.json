@@ -1,5 +1,18 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@controller/*": ["controller/*"],
+      "@db.schemas/*": ["db.schemas/*"],
+      "@helper/*": ["helper/*"],
+      "@exceptions/*": ["exceptions/*"],
+      "@interface/*": ["interface/*"],
+      "@service/*": ["service/*"],
+      "@repository/*": ["repository/*"]
+    },
+    "target": "es2017",
+    "esModuleInterop": true,
     "outDir": "dist",
     "module": "commonjs",
     "noImplicitAny": false,
@@ -15,7 +28,6 @@
       "node_modules/@types"
     ],
     "strictNullChecks": false,
-    "esModuleInterop": true,
     "strict": true,
     "resolveJsonModule": true
   },

@@ -1,62 +1,46 @@
-import express, { Request, Response } from "express";
-import {
-  createTask,
-  getTask,
-  deleteTask,
-  updateTask,
-} from "../service/task.service";
+import express, { Request, Response, NextFunction } from 'express';
+import { createTask, getTask, deleteTask, updateTask } from '@/service/task.service';
+import { buildResponse } from '@helper/response';
+import { SuccessType } from '@/exceptions/exceptions.type';
 
 const route = express.Router();
 
-route.get("/", async (req: Request, res: Response) => {
+route.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.status(200).send(await getTask());
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    buildResponse(res, 200, await getTask());
+  } catch (error) {
+    next(error);
   }
 });
 
-route.post("/", async (req: Request, res: Response) => {
+route.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, surname, tasks } = req.body;
-    await createTask(name, surname, tasks);
-    res.status(200).send("SUCCESS");
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    const task = req.body;
+    await createTask(task);
+    buildResponse(res, 201, SuccessType.TASKS_SUCCESS.message);
+  } catch (error) {
+    next(error);
   }
 });
 
-route.delete("/:_id", async (req: Request, res: Response) => {
+route.delete('/:_id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id } = req.params;
     await deleteTask(_id);
-    res.status(200).send("SUCCESS");
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    buildResponse(res, 200, SuccessType.TASKS_SUCCESS.message);
+  } catch (error) {
+    next(error);
   }
 });
 
-route.put("/:_id", async (req: Request, res: Response) => {
+route.put('/:_id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id } = req.params;
-    const { name, surname, tasks } = req.body;
-    await updateTask(_id, name, surname, tasks);
-    res.status(200).send("SUCCESS");
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    await updateTask(_id, req.body);
+    buildResponse(res, 200, SuccessType.TASKS_SUCCESS.message);
+  } catch (error) {
+    next(error);
   }
 });
 
-export = route;
+export default route;

@@ -1,61 +1,44 @@
-import express, { Request, Response } from "express";
-import {
-  createUser,
-  getUser,
-  deleteUser,
-  updateUser,
-} from "../service/user.service";
+import express, { Request, Response, NextFunction } from 'express';
+import { createUser, getUser, deleteUser, updateUser } from '@/service/user.service';
+import { buildResponse } from '@/helper/response';
+import { SuccessType } from '@/exceptions/exceptions.type';
 
 const route = express.Router();
 
-route.get("/", async (req: Request, res: Response) => {
+route.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.status(200).send(await getUser());
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    buildResponse(res, 200, await getUser());
+  } catch (error) {
+    next(error);
   }
 });
 
-route.post("/", async (req: Request, res: Response) => {
+route.post('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, surname, age, role } = req.body;
-    await createUser(name, surname, age, role);
-    res.status(200).send("SUCCESS");
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    await createUser(req.body);
+    buildResponse(res, 201, SuccessType.USERS_SUCCESS.message);
+  } catch (error) {
+    next(error);
   }
 });
 
-route.delete("/:_id", async (req: Request, res: Response) => {
+route.delete('/:_id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id } = req.params;
     await deleteUser(_id);
-    res.status(200).send("SUCCESS");
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    buildResponse(res, 200, SuccessType.USERS_SUCCESS.message);
+  } catch (error) {
+    next(error);
   }
 });
 
-route.put("/:_id", async (req: Request, res: Response) => {
+route.put('/:_id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { _id } = req.params;
-    const { name, surname, age, role } = req.body;
-    await updateUser(_id, name, surname, age, role);
-    res.status(200).send("SUCCESS");
-  } catch (err) {
-    if (err instanceof Error) {
-      console.error("An error occurred:", err.message);
-      res.status(503).send(err.message);
-    }
+    await updateUser(_id, req.body);
+    buildResponse(res, 200, SuccessType.USERS_SUCCESS.message);
+  } catch (error) {
+    next(error);
   }
 });
 
